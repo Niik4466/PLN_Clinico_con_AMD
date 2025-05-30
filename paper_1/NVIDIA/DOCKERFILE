@@ -1,22 +1,14 @@
-FROM nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04
+FROM pytorch/pytorch:2.7.1-cuda11.8-cudnn9-runtime
 
-WORKDIR /app
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --nocache-dir -r /tmp/requirements.txt
 
-RUN apt-get update
-
-RUN apt-get install -y \
-  python3-pip \
-  python3-dev \
-  libgl1-mesa-glx
-
-RUN rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt
-
-RUN pip3 install --no-cache-dir -r requirements.txt
+COPY download_dataset.py /tmp/download_dataset.py
+RUN mkdir -p /home/data3/Ali/Code/Saina/Brea/Dataset/
+RUN python3 /tmp/download_dataset.py
 
 COPY . /Breast-Cancer-Classification
 
-CMD ["python3", "Code1.py"]
+WORKDIR /Breast-Cancer-Classification
 
-
+RUN rm -rf /tmp/*
